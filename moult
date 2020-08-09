@@ -1,0 +1,39 @@
+#!/bin/bash
+
+# # debug
+# set -o xtrace
+
+shopt -s extglob
+
+declare cmd="ls -d"
+
+while [[ $# -ge 1 ]]; do
+    [[ $1 == --run ]] && cmd="rm -r -v" && shift 1
+done
+
+declare loc=${1:-/opt/conda}
+
+function envpaths() {
+    conda env list --json | \
+	python -c "import json, sys; list(map(print, filter(lambda i: i.startswith('${loc}'), json.load(sys.stdin)['envs'])))"
+}
+
+declare pkgs=$(for p in $(envpaths); do	conda list -p $p --export; done)
+declare -a pats=()
+
+while read line; do
+    vers=($(cut -d'=' --output-delimiter=' ' -f 1,2,3 -s <<<$line))
+    if [[ $pats == $vers ]]; then # compare first element, package name
+	pats+=(${vers[1]}-${vers[2]})
+    else
+	[[ -n $pats ]] && {
+	    printf -v tmp "|%s*" ${pats[@]:1}
+	    $cmd $loc/pkgs/$pats-!(${tmp:1})
+	}
+	pats=(${vers[0]} ${vers[1]}-${vers[2]})
+    fi
+done < <(sed -e '/^#/d' <<<$pkgs | sort | uniq)
+
+# final
+printf -v tmp "|%s*" ${pats[@]:1}
+$cmd $loc/pkgs/$pats-!(${tmp:1})
