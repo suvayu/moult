@@ -9,6 +9,17 @@ declare cmd="ls -d"
 
 while [[ $# -ge 1 ]]; do
     [[ $1 == --run ]] && cmd="rm -r -v" && shift 1
+    [[ $1 =~ -h|--help ]] && {
+	echo "Usage: ${0##*/} [conda-dir] [--run] [-h]"
+	echo
+	echo "  --run"
+	echo "      delete the packages, dry run otherwise"
+	echo
+	echo "  --help|-h"
+	echo "      this help message"
+	echo
+	exit
+    }
 done
 
 declare loc=${1:-/opt/conda}
