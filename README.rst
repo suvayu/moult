@@ -22,6 +22,8 @@ and removes them.
     └── pkgs
 
   For the above install, it expects ``/opt/conda`` as argument.
+  Typically the install directory is in your ``$HOME``, something like
+  ``~/.conda``.
 
 - The script then creates a globbing pattern for each package that
   matches the package versions that are not in use by an environment.
