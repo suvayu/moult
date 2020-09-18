@@ -28,6 +28,10 @@ and removes them.
 - The script then creates a globbing pattern for each package that
   matches the package versions that are not in use by an environment.
 
+- It also creates a pattern that matches all *orphaned packages*,
+  where none of the versions of a package are included in an
+  environment.
+
 - These patterns are then used to delete the orphaned packages (*like
   dead skin from a real :snake:*).
 

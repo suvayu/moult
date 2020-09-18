@@ -48,3 +48,8 @@ done < <(sed -e '/^#/d' <<<$pkgs | sort | uniq)
 # final package
 printf -v tmp "|%s*" ${pats[@]:1}
 $cmd $loc/pkgs/$pats-!(${tmp:1})
+
+# orphaned packages: packages that don't belong to any environments
+readarray orphaned < <(sed -e '/^#/d' <<<$pkgs | cut -d= -f 1 | sort | uniq)
+printf -v tmp "%s*|" ${orphaned[@]}
+$cmd $loc/pkgs/!(${tmp%|})
