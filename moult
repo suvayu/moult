@@ -8,7 +8,10 @@ shopt -s extglob
 declare cmd="ls -d"
 
 while [[ $# -ge 1 ]]; do
-    [[ $1 == --run ]] && cmd="rm -r -v" && shift 1
+    [[ $1 == --run ]] && {
+	cmd="rm -r -v" && shift 1
+	echo $(date +%Y-%m-%d-%H:%M:%S): deleting packages
+    }
     [[ $1 =~ -h|--help ]] && {
 	echo "Usage: ${0##*/} [conda-dir] [--run] [-h]"
 	echo
