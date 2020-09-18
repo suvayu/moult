@@ -33,7 +33,7 @@ declare pkgs=$(for p in $(envpaths); do	conda list -p $p --export; done)
 declare -a pats=()
 
 while read line; do
-    vers=($(cut -d'=' --output-delimiter=' ' -f 1,2,3 -s <<<$line))
+    vers=($(cut -d= --output-delimiter=' ' -f 1,2,3 -s <<<$line))
     if [[ $pats == $vers ]]; then # compare first element, package name
 	pats+=(${vers[1]}-${vers[2]})
     else
@@ -45,6 +45,6 @@ while read line; do
     fi
 done < <(sed -e '/^#/d' <<<$pkgs | sort | uniq)
 
-# final
+# final package
 printf -v tmp "|%s*" ${pats[@]:1}
 $cmd $loc/pkgs/$pats-!(${tmp:1})
